@@ -1,7 +1,7 @@
 package com.github.qyl.web;
 
-import com.kedacom.base.kidp.redis.RateLimiterProperties;
-import com.kedacom.base.kidp.redis.ratelimiter.exception.RateLimitException;
+import com.github.qyl.RateLimiterProperties;
+import com.github.qyl.exception.RateLimitException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;

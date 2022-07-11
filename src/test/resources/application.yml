@@ -1,10 +1,5 @@
 spring:
   redis:
-    delay-queue:
-      enabled: true
-      broker-scheduler-period: 500
-      message-validity-time: 30
-      producer-queue-num: 1
     host: 127.0.0.1
     lock:
       type: redisson
@@ -21,6 +16,3 @@ spring:
 #    maximum-size: 1000
 #    mode: expire_after_write
 #    time-unit: seconds
-logging:
-  level:
-    com.github.qyl: debug

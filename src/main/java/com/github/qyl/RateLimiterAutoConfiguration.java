@@ -19,6 +19,10 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 
 @Configuration
@@ -41,6 +45,18 @@ public class RateLimiterAutoConfiguration {
         this.limiterProperties = limiterProperties;
     }
 
+    @Bean
+    @ConditionalOnMissingBean
+    public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory factory) {
+        RedisTemplate<String, String> redisTemplate = new RedisTemplate<String, String>();
+        redisTemplate.setConnectionFactory(factory);
+        RedisSerializer<String> redisSerializer = new StringRedisSerializer();
+        redisTemplate.setKeySerializer(redisSerializer);
+        redisTemplate.setHashKeySerializer(redisSerializer);
+        return redisTemplate;
+    }
+
+
     @Bean(destroyMethod = "shutdown")
     @ConditionalOnMissingBean
     RedissonClient redisson() {
@@ -52,7 +68,7 @@ public class RateLimiterAutoConfiguration {
                 config.useClusterServers().setPassword(password);
             }
         } else {
-            config.useSingleServer().setAddress(host + ":" + port);
+            config.useSingleServer().setAddress("redis://" + host + ":" + port);
             if(StringUtils.isNotBlank(password)){
                 config.useSingleServer().setPassword(password);
             }

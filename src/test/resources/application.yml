@@ -1,4 +1,6 @@
 spring:
+  main:
+    allow-bean-definition-overriding: true
   redis:
     host: 127.0.0.1
     lock:

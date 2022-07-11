@@ -252,7 +252,7 @@ public class TestController {
 @RateLimitKey 注解可以放在方法的入参上，要求入参是基础数据类型，上面的例子，如果 name = kl。那么最终限流的 key 如下：
 
 
-key = RateLimiter_com.taptap.ratelimiter.web.TestController.get-kl
+key = RateLimiter_com.github.qyl.controller.RateLimterTestController.get-kl
 
 
 指定 keys 的方式

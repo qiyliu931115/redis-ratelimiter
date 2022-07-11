@@ -41,7 +41,7 @@ spring.ratelimiter.enabled = true开启限流，默认是不开启的。
 在需要加限流逻辑的方法上，添加注解 @RateLimit，如：
 
 
-
+```
 @RestController
 @RequestMapping("/test")
 public class TestController {
@@ -52,11 +52,11 @@ public class TestController {
         return "hello";
     }
 }
-
+```
 
 @RateLimit 注解说明
 
-
+```
 @Target(value = {ElementType.METHOD})
 @Retention(value = RetentionPolicy.RUNTIME)
 public @interface RateLimit {
@@ -116,7 +116,7 @@ public @interface RateLimit {
     RateLimitModel model() default RateLimitModel.COUNT;
 
 }
-
+```
 
 @RateLimit 注解可以添加到任意被 spring 管理的 bean 上，不局限于 controller ,service 、repository 也可以。在最基础限流功能使用上，以上三个步骤就已经完成了。@RateLimit 有两个最基础的参数，rateInterval 设置了时间窗口，rate 设置了时间窗口内允许通过的请求数量
 
@@ -144,8 +144,7 @@ public @interface RateLimit {
 
 
 
-
-
+```
 /**
 * 固定时间计数器（rate=1， rateInterval=10s, 在第一次请求开始后十秒内只允许一个请求）
 * @param name
@@ -156,8 +155,9 @@ public @interface RateLimit {
   public ResponseMessage rateLimit(String name) {
   return ResponseMessage.ok("rateLimit");
   }
+```
 
-
+```
 /**
 * 令牌桶（rate=10， rateInterval=10s, 在10秒内会匀速生成10个令牌，也就是说在第一次请求开始后10秒内每秒会生成1个令牌，maxQuantity=10 令牌桶最大容量是10，超过10后生成的令牌会被丢弃，quantity=3 每次请求需要从令牌桶里拿出消耗3个令牌）
 * @return
@@ -167,7 +167,9 @@ public @interface RateLimit {
   public ResponseMessage tokenBucket(String name) {
   return ResponseMessage.ok("tokenBucket");
   }
+```
 
+```
 /**
 * 降级策略
 *
@@ -177,6 +179,7 @@ public @interface RateLimit {
   public ResponseMessage getFallback(String name){
   return ResponseMessage.ok("你被限流了");
   }
+```
 
 限流的粒度，限流 key
 
@@ -194,15 +197,16 @@ key = RateLimiter_ + 类名 + 方法名
 默认触发限流后 程序会返回一个 http 状态码为 429 的响应，响应值如下：
 
 
-
+```
 {
 "code": 429,
 "msg": "Too Many Requests"
 }
-
+```
 
 如果项目中有全局异常捕获，需要在配置代码中增加捕获RateLimitException的逻辑，示例如下：
 
+```
 @ControllerAdvice
 @Slf4j
 @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -220,6 +224,8 @@ public class KiafExceptionHandler implements ResponseBodyAdvice {
 
 
 }
+```
+
 3.进阶用法
 自定义限流的 key
 
@@ -230,7 +236,7 @@ public class KiafExceptionHandler implements ResponseBodyAdvice {
 
 @RateLimitKey 的方式
 
-
+```
 @RestController
 @RequestMapping("/test")
 public class TestController {
@@ -241,7 +247,7 @@ public class TestController {
         return "get";
     }
 }
-
+```
 
 @RateLimitKey 注解可以放在方法的入参上，要求入参是基础数据类型，上面的例子，如果 name = kl。那么最终限流的 key 如下：
 
@@ -251,7 +257,7 @@ key = RateLimiter_com.taptap.ratelimiter.web.TestController.get-kl
 
 指定 keys 的方式
 
-
+```
 @RestController
 @RequestMapping("/test")
 public class TestController {
@@ -268,13 +274,14 @@ public class TestController {
         return "hello";
     }
 }
+```
 
 keys 这个参数比 @RateLimitKey 注解更智能，基本可以包含 @RateLimitKey 的能力，只是简单场景下，使用起来没有 @RateLimitKey 那么便捷。keys 的语法来自 spring 的 Spel，可以获取对象入参里的属性，支持获取多个，最后会拼接起来。使用过 spring-cache 的同学可能会更加熟悉 如果不清楚 Spel 的用法，可以参考 spring-cache 的注解文档。
 
 
 自定义 key 获取函数
 
-
+```
 @RestController
 @RequestMapping("/test")
 public class TestController {
@@ -289,7 +296,7 @@ public class TestController {
         return "keyFunction" + name;
     }
 }
-
+```
 
 当 @RateLimitKey 和 keys 参数都没法满足时，比如入参的值是一个加密的值，需要解密后根据相关明文内容限流。可以通过在同一类里自定义获取 key 的函数，这个函数要求和被限流的方法入参一致，返回值为 String 类型。返回值不能为空，为空时，会回退到默认的 key 获取策略。
 
@@ -297,13 +304,13 @@ public class TestController {
 
 自定义限流后的行为
 
-
+```
 spring:
 ratelimiter:
 enabled: true
 status-code: 555
 response-body: {"code":555,"msg":"Config Response Too Many Requests"}
-
+```
 
 添加如上配置后，触发限流时，http 的状态码就变成了 555。响应的内容变成了 Config Response Too Many Requests 了
 
@@ -313,7 +320,7 @@ response-body: {"code":555,"msg":"Config Response Too Many Requests"}
 
 自定义触发限流处理函数，限流降级
 
-
+```
 @RequestMapping("/test")
 public class TestController {
 
@@ -328,7 +335,7 @@ public class TestController {
     }
 
 }
-
+```
 
 要求请求参数喝返回值的类型需要和原限流函数的返回值类型一致，当触发限流时，框架会调用 fallbackFunction 配置的函数执行并返回，达到限流降级的效果
 
@@ -338,16 +345,17 @@ public class TestController {
 在 @RateLimit 注解里新增了属性 rateExpression。该属性支持 Spel 表达式从 Spring 的配置上下文中获取值。 当配置了 rateExpression 后，rate 属性的配置就不生效了。使用方式如下：
 
 
-
+```
     @GetMapping("/get2")
     @RateLimit(rate = 2, rateInterval = "10s",rateExpression = "\${spring.ratelimiter.rate}")
     public String get2() {
         return "get";
     }
+```
 
-
+```
 spring:
-ratelimiter:
-rate: 1
-
+  ratelimiter:
+    rate: 1
+```
 

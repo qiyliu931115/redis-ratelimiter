@@ -1,0 +1,5 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.kedacom.base.kidp.redis.RedisAutoConfiguration,\
+com.kedacom.base.kidp.redis.RateLimiterAutoConfiguration,\
+com.kedacom.base.kidp.redis.DelayQueueAutoConfiguration,\
+com.kedacom.base.kidp.redis.CaffeineCacheConfiguration

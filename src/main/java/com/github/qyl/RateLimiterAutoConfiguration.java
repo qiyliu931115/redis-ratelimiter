@@ -56,9 +56,8 @@ public class RateLimiterAutoConfiguration {
         return redisTemplate;
     }
 
-
-    @Bean(destroyMethod = "shutdown")
     @ConditionalOnMissingBean
+    @Bean(destroyMethod = "shutdown")
     RedissonClient redisson() {
         Config config = new Config();
         if (limiterProperties.getRedisClusterServer() != null) {

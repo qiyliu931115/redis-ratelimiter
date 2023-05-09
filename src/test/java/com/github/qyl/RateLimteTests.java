@@ -26,7 +26,6 @@ public class RateLimteTests {
     private WebApplicationContext context ;
     private MockMvc mvc ;
 
-
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);

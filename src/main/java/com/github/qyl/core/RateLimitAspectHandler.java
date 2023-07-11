@@ -79,7 +79,7 @@ public class RateLimitAspectHandler {
                 map.put("Total Quantity", results.get(1).toString());
                 map.put("Available Capacity", results.get(2).toString());
                 map.put("Apply for Quantity", String.valueOf(limiterInfo.getQuantity()));
-                log.info("Trigger current limiting, key:{}, info: {}", limiterInfo.getKey(), map);
+                log.debug("Trigger current limiting, key:{}, info: {}", limiterInfo.getKey(), map);
                 if (StringUtils.hasLength(rateLimit.fallbackFunction())) {
                     return rateLimiterService.executeFunction(rateLimit.fallbackFunction(), joinPoint);
                 }

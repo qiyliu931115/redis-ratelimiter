@@ -78,10 +78,10 @@ public class RateLimterTestController {
         return "get";
     }
 
-    @PostMapping("/hello")
+    @PostMapping("/user")
     @RateLimit(rate = 5, rateInterval = "10s",keys = {"#user.name","user.id"})
-    public String hello(@RequestBody User user) {
-        return "hello";
+    public String user(@RequestBody User user) {
+        return "user";
     }
 
 
